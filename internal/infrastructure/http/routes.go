@@ -1,4 +1,4 @@
-package delivery
+package http
 
 const (
 	RouteDeleteUserById  = "/v1/users/:userId"

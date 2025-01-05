@@ -1,8 +1,8 @@
-package delivery
+package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rodrigosscode/easy-user/internal/delivery/controller"
+	"github.com/rodrigosscode/easy-user/internal/interface/delivery/controller"
 )
 
 type (
