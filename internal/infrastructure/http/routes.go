@@ -5,5 +5,5 @@ const (
 	RouteFindUserById    = "/v1/users/:userId"
 	RouteFindUsersPaging = "/v1/users"
 	RouteSaveUser        = "/v1/users"
-	RouteUpdateUserById  = "/v1/users"
+	RouteUpdateUser      = "/v1/users"
 )

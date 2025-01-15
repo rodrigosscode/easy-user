@@ -13,15 +13,15 @@ import (
 	"go.uber.org/zap"
 )
 
-type SaveUserController struct {
-	uc userUsecase.SaveUseCase
+type UpdateUserController struct {
+	uc userUsecase.UpdateUseCase
 }
 
-func NewSaveUserController(uc userUsecase.SaveUseCase) *SaveUserController {
-	return &SaveUserController{uc: uc}
+func NewUpdateUserController(uc userUsecase.UpdateUseCase) *UpdateUserController {
+	return &UpdateUserController{uc: uc}
 }
 
-func (c *SaveUserController) Execute(w http.ResponseWriter, r *http.Request) {
+func (c *UpdateUserController) Execute(w http.ResponseWriter, r *http.Request) {
 	jsonBody, err := io.ReadAll(r.Body)
 
 	if err != nil {
@@ -30,21 +30,21 @@ func (c *SaveUserController) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var input input.SaveInput
+	var input input.UpdateInput
 	if err := json.Unmarshal(jsonBody, &input); err != nil {
 		logger.Error("Failed to unmarshal request body", zap.ByteString("requestBody", jsonBody), zap.Error(err))
 		handler.HandleError(w, err)
 		return
 	}
 
-	uSaved, err := c.uc.Execute(&input)
+	uUpdated, err := c.uc.Execute(&input)
 
 	if err != nil {
-		logger.Error("Failed to save user", zap.Any("input", input), zap.Error(err))
+		logger.Error("Failed to update user", zap.Any("input", input), zap.Error(err))
 		handler.HandleError(w, err)
 		return
 	}
 
-	logger.Info("User saved successfully", zap.Any("user", uSaved))
-	response.NewSuccessResponse(http.StatusAccepted, uSaved).Send(w)
+	logger.Info("User updated successfully", zap.Any("user", uUpdated))
+	response.NewSuccessResponse(http.StatusAccepted, uUpdated).Send(w)
 }

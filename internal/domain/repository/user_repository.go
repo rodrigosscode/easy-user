@@ -5,8 +5,9 @@ import (
 )
 
 type UserRepository interface {
-	FindById(id string) (*domain.User, error)
+	FindById(id int) (*domain.User, error)
 	Save(u *domain.User) (*domain.User, error)
-	Delete(id string) error
+	DeleteById(id int) error
 	Update(u *domain.User) (*domain.User, error)
+	FindByPage(page, pageSize int) (_ *[]domain.User, totalRecords int64, _ error)
 }

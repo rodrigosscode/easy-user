@@ -1,41 +1,48 @@
 package controller
 
 import (
-	"encoding/json"
 	"net/http"
+	"strconv"
 
 	configs "github.com/rodrigosscode/easy-user/configs/http"
-	usecase "github.com/rodrigosscode/easy-user/internal/application/usecase/user"
+	"github.com/rodrigosscode/easy-user/internal/application/handler"
+	"github.com/rodrigosscode/easy-user/internal/application/response"
+	userUsecase "github.com/rodrigosscode/easy-user/internal/application/usecase/user"
 	userInput "github.com/rodrigosscode/easy-user/internal/application/usecase/user/input"
+	domainErr "github.com/rodrigosscode/easy-user/internal/domain/error"
+	"github.com/rodrigosscode/easy-user/internal/infrastructure/logger"
+	"go.uber.org/zap"
 )
 
 type DeleteUserByIdController struct {
-	uc usecase.DeleteByIdUseCase
+	uc userUsecase.DeleteByIdUseCase
 }
 
-func NewDeleteUserByIdController(uc usecase.DeleteByIdUseCase) *DeleteUserByIdController {
+func NewDeleteUserByIdController(uc userUsecase.DeleteByIdUseCase) *DeleteUserByIdController {
 	return &DeleteUserByIdController{uc: uc}
 }
 
 func (c *DeleteUserByIdController) Execute(w http.ResponseWriter, r *http.Request) {
-	userId := r.URL.Query().Get(configs.QueryParamUserId)
+	userIdStr := r.URL.Query().Get(configs.QueryParamUserId)
+	userId, err := strconv.Atoi(userIdStr)
 
-	if userId == "" {
-		// handler.HandleError(w, erros.NewInvalidRequestErr())
+	if err != nil {
+		logger.Error("Invalid user ID in request", zap.String("userId", userIdStr), zap.Error(err))
+		handler.HandleError(w, domainErr.NewInvalidIdRequestErr(userId))
 		return
 	}
 
 	i := &userInput.DeleteByIdInput{Id: userId}
 
 	// ctx := r.Context()
-	err := c.uc.Execute(i)
+	err = c.uc.Execute(i)
 
 	if err != nil {
-		// handler.HandleError(w, err)
+		logger.Error("Failed to delete user", zap.Int("userId", userId), zap.Error(err))
+		handler.HandleError(w, err)
 		return
 	}
 
-	// logger.Info("Response Body", user)
-	//response.NewSuccess(http.StatusNoContent,"Delete successfuly").Send(w)
-	json.NewEncoder(w).Encode("Deletado com sucesso")
+	logger.Info("User deleted successfully", zap.Int("userId", userId))
+	response.NewSuccessResponse(http.StatusNoContent, "User deleted successfully").Send(w)
 }

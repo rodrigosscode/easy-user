@@ -5,8 +5,9 @@ import (
 )
 
 type UserDb interface {
-	FindById(id string) (db.User, error)
+	FindById(id int) (db.User, error)
 	Save(u db.User) (db.User, error)
-	Delete(id string) error
+	DeleteById(id int) error
 	Update(u db.User) (db.User, error)
+	FindByPage(page, limit int) (_ []db.User, totalRecords int64, _ error)
 }

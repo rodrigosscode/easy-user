@@ -19,6 +19,9 @@ func NewDeleteByIdUseCase(repository repository.UserRepository) DeleteByIdUseCas
 }
 
 func (uc *deleteByIdUseCase) Execute(i *input.DeleteByIdInput) error {
-	err := uc.repository.Delete(i.Id)
-	return err
+	if err := uc.repository.DeleteById(i.Id); err != nil {
+		return err
+	}
+
+	return nil
 }

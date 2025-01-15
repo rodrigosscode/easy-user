@@ -8,6 +8,7 @@ import (
 type (
 	UserMapper interface {
 		ToDomain(u *db.User) *domain.User
+		ToDomains(us *[]db.User) *[]domain.User
 		ToEntity(u *domain.User) *db.User
 	}
 	userMapper struct{}
@@ -15,6 +16,16 @@ type (
 
 func NewUserMapper() UserMapper {
 	return &userMapper{}
+}
+
+func (m *userMapper) ToDomains(us *[]db.User) *[]domain.User {
+	domainUsers := make([]domain.User, len(*us))
+
+	for i, u := range *us {
+		domainUsers[i] = *m.ToDomain(&u)
+	}
+
+	return &domainUsers
 }
 
 func (m *userMapper) ToDomain(u *db.User) *domain.User {

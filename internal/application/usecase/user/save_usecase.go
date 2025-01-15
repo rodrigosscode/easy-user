@@ -4,7 +4,6 @@ import (
 	"github.com/rodrigosscode/easy-user/internal/application/usecase/user/input"
 	domain "github.com/rodrigosscode/easy-user/internal/domain/entity"
 	"github.com/rodrigosscode/easy-user/internal/domain/repository"
-	"github.com/rodrigosscode/easy-user/internal/domain/validator"
 )
 
 type (
@@ -22,7 +21,7 @@ func NewSaveUseCase(repository repository.UserRepository) SaveUseCase {
 
 func (uc *saveUseCase) Execute(i *input.SaveInput) (*domain.User, error) {
 
-	if err := validateSaveInput(i); err != nil {
+	if err := i.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -39,21 +38,4 @@ func (uc *saveUseCase) Execute(i *input.SaveInput) (*domain.User, error) {
 	}
 
 	return uSaved, nil
-}
-
-func validateSaveInput(i *input.SaveInput) error {
-
-	if err := validator.ValidateName(i.Name); err != nil {
-		return err
-	}
-
-	if err := validator.ValidateEmail(i.Email); err != nil {
-		return err
-	}
-
-	if err := validator.ValidateAge(i.Age); err != nil {
-		return err
-	}
-
-	return nil
 }

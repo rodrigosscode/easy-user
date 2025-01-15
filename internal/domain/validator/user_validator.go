@@ -1,42 +1,41 @@
 package validator
 
 import (
-	"errors"
-
+	userError "github.com/rodrigosscode/easy-user/internal/domain/error"
 	"github.com/rodrigosscode/easy-user/internal/util"
 )
 
 const (
-	minNameLenght = 3
+	minNameLength = 3
 	maxAge        = 120
 )
 
 func ValidateName(name string) error {
 	if name == "" {
-		return errors.New("name cannot be empty")
+		return userError.NewUserNameEmptyErr()
 	}
-	if len(name) < minNameLenght {
-		return errors.New("name must be at least 3 characters")
+	if len(name) < minNameLength {
+		return userError.NewUserNameTooShortErr(name)
 	}
 	return nil
 }
 
 func ValidateEmail(email string) error {
 	if email == "" {
-		return errors.New("email cannot be empty")
+		return userError.NewUserEmailEmptyErr()
 	}
-	if !util.IsValidEmailFormat(email) { // Imagine uma função que valida o formato.
-		return errors.New("email is not in a valid format")
+	if !util.IsValidEmailFormat(email) {
+		return userError.NewUserEmailInvalidErr(email)
 	}
 	return nil
 }
 
 func ValidateAge(age int) error {
 	if age < 0 {
-		return errors.New("age cannot be negative")
+		return userError.NewUserAgeNegativeErr(age)
 	}
 	if age > maxAge {
-		return errors.New("age must be realistic")
+		return userError.NewUserAgeUnrealisticErr(age)
 	}
 	return nil
 }

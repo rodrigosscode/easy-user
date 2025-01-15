@@ -2,15 +2,9 @@ package db
 
 type (
 	User struct {
-		ID    string
-		Name  string
-		Email string
-		Age   int
+		ID    int    `gorm:"type:int;primaryKey;autoIncrement"`
+		Name  string `gorm:"type:varchar(100);not null"`
+		Email string `gorm:"type:varchar(100);unique;not null"`
+		Age   int    `gorm:"type:int;not null"`
 	}
 )
-
-// func (p *Pedido) BeforeCreate(tx *gorm.DB) error {
-// 	uuid := uuid.New().String()
-// 	p.Id = uuid
-// 	return nil
-// }

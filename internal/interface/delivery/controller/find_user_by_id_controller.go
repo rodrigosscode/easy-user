@@ -1,13 +1,17 @@
 package controller
 
 import (
-	"encoding/json"
-	"errors"
 	"net/http"
+	"strconv"
 
 	configs "github.com/rodrigosscode/easy-user/configs/http"
+	"github.com/rodrigosscode/easy-user/internal/application/handler"
+	"github.com/rodrigosscode/easy-user/internal/application/response"
 	userUseCase "github.com/rodrigosscode/easy-user/internal/application/usecase/user"
 	userInput "github.com/rodrigosscode/easy-user/internal/application/usecase/user/input"
+	domainErr "github.com/rodrigosscode/easy-user/internal/domain/error"
+	"github.com/rodrigosscode/easy-user/internal/infrastructure/logger"
+	"go.uber.org/zap"
 )
 
 type FindUserByIdController struct {
@@ -19,10 +23,12 @@ func NewFindUserByIdController(uc userUseCase.FindByIdUseCase) *FindUserByIdCont
 }
 
 func (c *FindUserByIdController) Execute(w http.ResponseWriter, r *http.Request) {
-	userId := r.URL.Query().Get(configs.QueryParamUserId)
+	userIdStr := r.URL.Query().Get(configs.QueryParamUserId)
+	userId, err := strconv.Atoi(userIdStr)
 
-	if userId == "" {
-		// handler.HandleError(w, erros.NewInvalidRequestErr())
+	if err != nil {
+		logger.Error("Invalid user ID in request", zap.String("userId", userIdStr), zap.Error(err))
+		handler.HandleError(w, domainErr.NewInvalidIdRequestErr(userId))
 		return
 	}
 
@@ -31,12 +37,11 @@ func (c *FindUserByIdController) Execute(w http.ResponseWriter, r *http.Request)
 	userFound, err := c.uc.Execute(i)
 
 	if err != nil {
-		panic(errors.New("deu ruim"))
-		// handler.HandleError(w, err)
-		//return
+		logger.Error("Failed to find user by id", zap.Int("userId", userId), zap.Error(err))
+		handler.HandleError(w, err)
+		return
 	}
 
-	// logger.Info("Response Body", user)
-	// response.NewSucess(http.StatusOK, user).Send(w)
-	json.NewEncoder(w).Encode(userFound)
+	logger.Info("User found successfully", zap.Int("userId", userId), zap.Any("user", userFound))
+	response.NewSuccessResponse(http.StatusOK, userFound).Send(w)
 }

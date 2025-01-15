@@ -1,7 +1,7 @@
 package configs
 
 const (
-	QueryParamUserId = "userId"
-	QueryParamPage   = "page"
-	QueryParamLimit  = "limit"
+	QueryParamUserId    = "userId"
+	QueryParamPage      = "page"
+	QueryParamPageLimit = "limit"
 )

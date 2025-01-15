@@ -2,10 +2,10 @@ package domain
 
 type (
 	User struct {
-		ID    string
-		Name  string
-		Email string
-		Age   int
+		ID    int    `json:"id"`
+		Name  string `json:"name"`
+		Email string `json:"email"`
+		Age   int    `json:"age"`
 	}
 
 	Opt func(*User)

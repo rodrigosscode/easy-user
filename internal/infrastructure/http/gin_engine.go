@@ -17,7 +17,7 @@ type (
 		findUserByIdCtrl    *controller.FindUserByIdController
 		findUsersPagingCtrl *controller.FindUsersPagingController
 		saveUserCtrl        *controller.SaveUserController
-		updateUserByIdCtrl  *controller.UpdateUserByIdController
+		updateUserCtrl      *controller.UpdateUserController
 	}
 )
 
@@ -27,7 +27,7 @@ func NewGinEngine(
 	findUserByIdCtrl *controller.FindUserByIdController,
 	findUsersPagingCtrl *controller.FindUsersPagingController,
 	saveUserCtrl *controller.SaveUserController,
-	updateUserByIdCtrl *controller.UpdateUserByIdController,
+	updateUserCtrl *controller.UpdateUserController,
 ) *ginEngine {
 	return &ginEngine{
 		router:              router,
@@ -35,7 +35,7 @@ func NewGinEngine(
 		findUserByIdCtrl:    findUserByIdCtrl,
 		findUsersPagingCtrl: findUsersPagingCtrl,
 		saveUserCtrl:        saveUserCtrl,
-		updateUserByIdCtrl:  updateUserByIdCtrl,
+		updateUserCtrl:      updateUserCtrl,
 	}
 }
 
@@ -44,5 +44,9 @@ func (e *ginEngine) SetAppHandlers() {
 	e.router.GET(RouteFindUserById, e.findUserById())
 	e.router.GET(RouteFindUsersPaging, e.findUsersPaging())
 	e.router.POST(RouteSaveUser, e.saveUser())
-	e.router.PUT(RouteUpdateUserById, e.updateUserById())
+	e.router.PUT(RouteUpdateUser, e.updateUser())
+}
+
+func (e *ginEngine) GetRouter() *gin.Engine {
+	return e.router
 }

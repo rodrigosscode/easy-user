@@ -8,7 +8,7 @@ import (
 
 type (
 	UpdateUseCase interface {
-		Execute(i input.UpdateInput) (*domain.User, error)
+		Execute(i *input.UpdateInput) (*domain.User, error)
 	}
 	updateUseCase struct {
 		repository repository.UserRepository
@@ -19,7 +19,7 @@ func NewUpdateUseCase(repository repository.UserRepository) UpdateUseCase {
 	return &updateUseCase{repository: repository}
 }
 
-func (uc *updateUseCase) Execute(i input.UpdateInput) (*domain.User, error) {
+func (uc *updateUseCase) Execute(i *input.UpdateInput) (*domain.User, error) {
 
 	// // Validação inicial do input
 	// if i.Id == "" {
@@ -33,9 +33,9 @@ func (uc *updateUseCase) Execute(i input.UpdateInput) (*domain.User, error) {
 	}
 
 	// TODO: avaliar para validação
-	uToUpdate.Name = i.User.Name
-	uToUpdate.Email = i.User.Email
-	uToUpdate.Age = i.User.Age
+	uToUpdate.Name = i.Name
+	uToUpdate.Email = i.Email
+	uToUpdate.Age = i.Age
 
 	uUpdated, err := uc.repository.Update(uToUpdate)
 

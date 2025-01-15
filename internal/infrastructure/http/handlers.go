@@ -25,6 +25,10 @@ func (e *ginEngine) findUserById() gin.HandlerFunc {
 
 func (e *ginEngine) findUsersPaging() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		query := ctx.Request.URL.Query()
+		query.Add(configs.QueryParamPage, ctx.Query(configs.QueryParamPage))
+		query.Add(configs.QueryParamPageLimit, ctx.Query(configs.QueryParamPageLimit))
+		ctx.Request.URL.RawQuery = query.Encode()
 		e.findUsersPagingCtrl.Execute(ctx.Writer, ctx.Request)
 	}
 }
@@ -35,8 +39,8 @@ func (e *ginEngine) saveUser() gin.HandlerFunc {
 	}
 }
 
-func (e *ginEngine) updateUserById() gin.HandlerFunc {
+func (e *ginEngine) updateUser() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		e.updateUserByIdCtrl.Execute(ctx.Writer, ctx.Request)
+		e.updateUserCtrl.Execute(ctx.Writer, ctx.Request)
 	}
 }
