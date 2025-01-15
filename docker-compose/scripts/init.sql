@@ -1,0 +1,1 @@
+CREATE DATABASE easy_user_db
