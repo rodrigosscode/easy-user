@@ -11,7 +11,7 @@ func NewViperConfig() *viper.Viper {
 
 	var env = os.Getenv("ENVIRONMENT")
 	viper.SetConfigName("config." + env)
-	viper.AddConfigPath("../configs/env")
+	viper.AddConfigPath("./configs/env")
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 

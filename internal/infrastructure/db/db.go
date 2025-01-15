@@ -2,12 +2,24 @@ package db
 
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	db "github.com/rodrigosscode/easy-user/internal/infrastructure/db/entity"
 	"github.com/rodrigosscode/easy-user/internal/infrastructure/db/paging"
+	zapLogger "github.com/rodrigosscode/easy-user/internal/infrastructure/logger"
+	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
-
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+)
+
+const (
+	maxRetries      = 10
+	retryDelay      = 3 * time.Second
+	maxOpenConns    = 10
+	maxIdleConns    = 5
+	connMaxLifetime = 5
 )
 
 type DbConnection struct {
@@ -15,10 +27,37 @@ type DbConnection struct {
 }
 
 func NewDbConnection(dsn string) (*DbConnection, error) {
-	gormDb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	var gormDb *gorm.DB
+	var err error
+
+	for i := 1; i <= maxRetries; i++ {
+		gormDb, err = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
+
+		if err == nil {
+			break
+		}
+
+		zapLogger.Warn(fmt.Sprintf("Attempt %d of %d: fail to connect db, trying again %s...\n", i, maxRetries, retryDelay), zap.Error(err))
+		time.Sleep(retryDelay)
+	}
 
 	if err != nil {
-		return nil, err
+		zapLogger.Warn("Failed to connect to db", zap.Error(err))
+		return nil, errors.New("fail to connect db")
+	}
+
+	sqlDB, err := gormDb.DB()
+
+	if err != nil {
+		panic(err)
+	}
+
+	sqlDB.SetMaxOpenConns(maxOpenConns)
+	sqlDB.SetMaxIdleConns(maxIdleConns)
+	sqlDB.SetConnMaxLifetime(connMaxLifetime)
+
+	if err := sqlDB.Ping(); err != nil {
+		panic(err)
 	}
 
 	gormDb.AutoMigrate(&db.User{})
