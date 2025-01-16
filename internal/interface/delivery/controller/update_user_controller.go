@@ -30,17 +30,17 @@ func (c *UpdateUserController) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var input input.UpdateInput
-	if err := json.Unmarshal(jsonBody, &input); err != nil {
+	var i input.UpdateInput
+	if err := json.Unmarshal(jsonBody, &i); err != nil {
 		logger.Error("Failed to unmarshal request body", zap.ByteString("requestBody", jsonBody), zap.Error(err))
 		handler.HandleError(w, err)
 		return
 	}
 
-	uUpdated, err := c.uc.Execute(&input)
+	uUpdated, err := c.uc.Execute(&i)
 
 	if err != nil {
-		logger.Error("Failed to update user", zap.Any("input", input), zap.Error(err))
+		logger.Error("Failed to update user", zap.Any("input", i), zap.Error(err))
 		handler.HandleError(w, err)
 		return
 	}

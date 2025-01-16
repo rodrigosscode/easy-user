@@ -33,7 +33,6 @@ func (c *FindUserByIdController) Execute(w http.ResponseWriter, r *http.Request)
 	}
 
 	i := &userInput.FindByIdInput{Id: userId}
-	// ctx := r.Context()
 	userFound, err := c.uc.Execute(i)
 
 	if err != nil {
