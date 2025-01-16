@@ -21,10 +21,9 @@ func NewUpdateUseCase(repository repository.UserRepository) UpdateUseCase {
 
 func (uc *updateUseCase) Execute(i *input.UpdateInput) (*domain.User, error) {
 
-	// // Validação inicial do input
-	// if i.Id == "" {
-	// 	return nil, fmt.Errorf("invalid input: ID cannot be empty")
-	// }
+	if err := i.Validate(); err != nil {
+		return nil, err
+	}
 
 	uToUpdate, err := uc.repository.FindById(i.Id)
 
@@ -32,7 +31,6 @@ func (uc *updateUseCase) Execute(i *input.UpdateInput) (*domain.User, error) {
 		return nil, err
 	}
 
-	// TODO: avaliar para validação
 	uToUpdate.Name = i.Name
 	uToUpdate.Email = i.Email
 	uToUpdate.Age = i.Age

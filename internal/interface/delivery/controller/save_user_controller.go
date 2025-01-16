@@ -30,17 +30,17 @@ func (c *SaveUserController) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var input input.SaveInput
-	if err := json.Unmarshal(jsonBody, &input); err != nil {
+	var i input.SaveInput
+	if err := json.Unmarshal(jsonBody, &i); err != nil {
 		logger.Error("Failed to unmarshal request body", zap.ByteString("requestBody", jsonBody), zap.Error(err))
 		handler.HandleError(w, err)
 		return
 	}
 
-	uSaved, err := c.uc.Execute(&input)
+	uSaved, err := c.uc.Execute(&i)
 
 	if err != nil {
-		logger.Error("Failed to save user", zap.Any("input", input), zap.Error(err))
+		logger.Error("Failed to save user", zap.Any("input", i), zap.Error(err))
 		handler.HandleError(w, err)
 		return
 	}

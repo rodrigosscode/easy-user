@@ -33,8 +33,6 @@ func (c *DeleteUserByIdController) Execute(w http.ResponseWriter, r *http.Reques
 	}
 
 	i := &userInput.DeleteByIdInput{Id: userId}
-
-	// ctx := r.Context()
 	err = c.uc.Execute(i)
 
 	if err != nil {
