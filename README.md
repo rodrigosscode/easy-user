@@ -143,3 +143,10 @@ docker-compose up --build
 ```
 
 Pronto! Se tudo ocorrer bem a sua aplicação estará de pé em http://localhost:8080
+
+## Bônus
+
+Na **V1** o projeto foi desenvolvido buscando os pontos especificos da **Arquitetura Limpa** sob a interação das camadas.    
+
+Veja em:    
+https://github.com/rodrigosscode/easy-user/tree/release/v1
