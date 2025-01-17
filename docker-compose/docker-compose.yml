@@ -9,10 +9,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - .:/app
-    command: ["./wait-for-it.sh", "db:3306", "--", "./main"]
 
   db:
     image: mysql:8
@@ -22,3 +22,8 @@ services:
       - "3306:3306"
     volumes:
       - ./scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
